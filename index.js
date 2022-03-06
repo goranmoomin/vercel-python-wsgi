@@ -21,7 +21,7 @@ exports.build = async ({ files, entrypoint, config }) => {
   );
   log.info(`Build AMI version: ${systemReleaseContents.trim()}`);
 
-  const runtime = config.runtime || 'python3.6';
+  const runtime = config.runtime || 'python3.9';
   python.validateRuntime(runtime);
   log.info(`Lambda runtime: ${runtime}`);
 
@@ -55,9 +55,9 @@ exports.build = async ({ files, entrypoint, config }) => {
   log.heading('Preparing lambda bundle');
 
   const lambda = await createLambda({
-    files: await glob('**', srcDir),
+    files: await glob('**', { ignore: config.excludeFiles, cwd: srcDir }),
     handler: 'vercel_python_wsgi.vercel_handler',
-    runtime: `${config.runtime || 'python3.6'}`,
+    runtime: `${config.runtime || 'python3.9'}`,
     environment: {
       WSGI_APPLICATION: `${wsgiApplication}`,
     },
